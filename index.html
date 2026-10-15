@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="CampusPilot — AI-powered student utility assistant and campus navigator for smart campus life." />
+  <meta name="theme-color" content="#0e0f14" />
+  <title>CampusPilot — Smart Campus AI</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── SPLASH SCREEN ─── -->
+  <div id="splash-screen" class="splash">
+    <div class="splash-logo">
+      <span class="splash-icon">🎓</span>
+      <div class="splash-wordmark">
+        <h1 class="splash-title">CampusPilot</h1>
+        <div class="splash-dot"></div>
+      </div>
+      <p class="splash-tagline">Your smart campus companion</p>
+    </div>
+    <div class="splash-loader-wrap">
+      <div class="splash-loader"><div class="loader-bar"></div></div>
+    </div>
+  </div>
+
+  <!-- ─── LOGIN SCREEN ─── -->
+  <div id="login-screen" class="screen hidden">
+    <div class="login-bg-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+    <div class="login-card glass">
+      <div class="login-logo">
+        <span class="logo-icon">🎓</span>
+        <h2>CampusPilot</h2>
+        <p>Your AI campus companion</p>
+      </div>
+
+      <!-- Segmented Control for New Student vs Sign In -->
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab-btn active" id="tab-btn-register" onclick="switchAuthMode('register')">
+          <span>✨ New Student</span>
+        </button>
+        <button type="button" class="auth-tab-btn" id="tab-btn-login" onclick="switchAuthMode('login')">
+          <span>🔑 Sign In</span>
+        </button>
+      </div>
+
+      <!-- ── FORM 1: NEW STUDENT REGISTRATION ── -->
+      <div class="auth-form-panel" id="register-form">
+        <div class="auth-header-sub">Enter your details to create your smart student profile</div>
+        
+        <label for="reg-name" class="field-label">Full Name</label>
+        <div class="input-group">
+          <span class="input-icon">👤</span>
+          <input type="text" id="reg-name" placeholder="e.g. Aarav Sharma" autocomplete="name" />
+        </div>
+
+        <label for="reg-email" class="field-label">College Email</label>
+        <div class="input-group">
+          <span class="input-icon">📧</span>
+          <input type="email" id="reg-email" placeholder="e.g. aarav@college.edu" autocomplete="email" />
+        </div>
+
+        <div class="form-grid-2">
+          <div>
+            <label for="reg-roll" class="field-label">Roll / Student ID</label>
+            <div class="input-group">
+              <span class="input-icon">🆔</span>
+              <input type="text" id="reg-roll" placeholder="e.g. CS24018" style="text-transform:uppercase" />
+            </div>
+          </div>
+          <div>
+            <label for="reg-phone" class="field-label">Phone (Optional)</label>
+            <div class="input-group">
+              <span class="input-icon">📱</span>
+              <input type="tel" id="reg-phone" placeholder="9876543210" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div>
+            <label for="reg-dept" class="field-label">Department</label>
+            <div class="input-group select-group">
+              <span class="input-icon">🏛</span>
+              <select id="reg-dept" class="auth-select">
+                <option value="Computer Science & Engineering">Computer Science</option>
+                <option value="Information Technology">Information Tech</option>
+                <option value="Electronics & Communication">Electronics & Comm</option>
+                <option value="Mechanical Engineering">Mechanical Engg</option>
+                <option value="Electrical Engineering">Electrical Engg</option>
+                <option value="Civil Engineering">Civil Engg</option>
+                <option value="Biotechnology">Biotechnology</option>
+                <option value="Management Studies">Management (MBA)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label for="reg-year" class="field-label">Current Year</label>
+            <div class="input-group select-group">
+              <span class="input-icon">📅</span>
+              <select id="reg-year" class="auth-select">
+                <option value="1st Year (Fresher)">1st Year (Fresher)</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <label for="reg-pin" class="field-label">Password / Security PIN</label>
+        <div class="input-group">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="reg-pin" placeholder="Create a password or 4-digit PIN" />
+        </div>
+
+        <button id="reg-submit-btn" class="btn-primary" onclick="handleStudentRegister()">
+          <span>Create Profile & Sign In</span>
+          <span class="btn-arrow">→</span>
+        </button>
+
+        <p class="auth-footer-prompt">
+          Already have an account? <a href="#" onclick="switchAuthMode('login'); return false;">Sign In here →</a>
+        </p>
+      </div>
+
+      <!-- ── FORM 2: RETURNING STUDENT SIGN IN ── -->
+      <div class="auth-form-panel hidden" id="login-form">
+        <div class="auth-header-sub">Welcome back! Sign in to access your campus dashboard</div>
+
+        <label for="login-identifier" class="field-label">College Email or Roll Number</label>
+        <div class="input-group">
+          <span class="input-icon">📧</span>
+          <input type="text" id="login-identifier" placeholder="yourname@college.edu or Roll No" autocomplete="username" />
+        </div>
+
+        <label for="login-pin" class="field-label">Password / Security PIN</label>
+        <div class="input-group">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="login-pin" placeholder="Enter your password / PIN" />
+        </div>
+
+        <button id="login-submit-btn" class="btn-primary" onclick="handleStudentLogin()">
+          <span>Sign In</span>
+          <span class="btn-arrow">→</span>
+        </button>
+
+        <div class="auth-divider">
+          <span>or</span>
+        </div>
+
+        <button type="button" class="btn-secondary" style="width:100%" onclick="switchToOtpMode()">
+          <span>📧 Sign In via One-Time Password (OTP)</span>
+        </button>
+
+        <button type="button" class="btn-demo-pill" onclick="quickDemoLogin()">
+          <span>⚡ Instant Demo: Sign in as Priya Sharma</span>
+        </button>
+
+        <p class="auth-footer-prompt">
+          New to campus? <a href="#" onclick="switchAuthMode('register'); return false;">Register your profile →</a>
+        </p>
+      </div>
+
+      <!-- ── FORM 3: OTP VERIFICATION FORM ── -->
+      <div class="otp-form hidden" id="otp-form">
+        <p class="otp-hint">OTP sent to <strong id="otp-email-display"></strong></p>
+        <label class="field-label">Enter OTP</label>
+        <div class="otp-inputs">
+          <input type="text" maxlength="1" class="otp-digit" id="otp-0" />
+          <input type="text" maxlength="1" class="otp-digit" id="otp-1" />
+          <input type="text" maxlength="1" class="otp-digit" id="otp-2" />
+          <input type="text" maxlength="1" class="otp-digit" id="otp-3" />
+          <input type="text" maxlength="1" class="otp-digit" id="otp-4" />
+          <input type="text" maxlength="1" class="otp-digit" id="otp-5" />
+        </div>
+        <button id="verify-otp-btn" class="btn-primary" onclick="verifyOTP()">
+          <span>Verify & Login</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <p class="resend-text">Didn't get it? <a href="#" onclick="resendCurrentOtp(); return false;">Resend</a> · <a href="#" onclick="switchAuthMode('login'); return false;">Back to Sign In</a></p>
+      </div>
+
+      <div class="login-lang">
+        <span>Language:</span>
+        <button class="lang-pill active" data-lang="en" onclick="setLang('en')">English</button>
+        <button class="lang-pill" data-lang="hi" onclick="setLang('hi')">हिंदी</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── MAIN APP ─── -->
+  <div id="app" class="hidden">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span id="status-time">16:51</span>
+      <div class="status-icons">
+        <span>📶</span><span>🔋</span>
+      </div>
+    </div>
+
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <span class="header-logo">🎓</span>
+        <div>
+          <div class="header-title">CampusPilot</div>
+          <div class="header-sub" id="header-greeting">Good afternoon, Priya 👋</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" id="lang-toggle-btn" onclick="toggleLang()" title="Toggle Language">
+          <span id="lang-flag">🌐</span>
+        </button>
+        <button class="icon-btn" onclick="showNotifications()" title="Notifications" style="position:relative">
+          <span>🔔</span>
+          <span class="notif-badge">3</span>
+        </button>
+        <div class="avatar" id="header-student-avatar" onclick="showProfile()" title="View Student Profile" style="cursor:pointer">P</div>
+      </div>
+    </header>
+
+    <!-- Tab Content -->
+    <main class="app-main" id="main-content">
+
+      <!-- ── HOME TAB ── -->
+      <div class="tab-panel active" id="tab-home">
+
+        <!-- Hero Greeting Card -->
+        <div class="hero-card">
+          <div class="hero-top">
+            <div>
+              <div class="hero-greeting" id="hero-greeting-text">Good afternoon ☀️</div>
+              <div class="hero-name" id="hero-student-name">Priya Sharma</div>
+              <div class="hero-roll" id="hero-student-roll">CS21045 · Year 3</div>
+              <button type="button" class="hero-profile-link" onclick="showProfile()">
+                <span>👤 View Student Details</span> <span>›</span>
+              </button>
+            </div>
+            <div class="hero-avatar" id="hero-student-avatar" onclick="showProfile()" title="Click to view student profile" style="cursor:pointer">P</div>
+          </div>
+          <div class="hero-divider"></div>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <div class="hero-stat-val">3</div>
+              <div class="hero-stat-label" data-key="classes_today">Classes Today</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-val">2</div>
+              <div class="hero-stat-label" data-key="pending">Pending</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-val">5</div>
+              <div class="hero-stat-label" data-key="done">Done</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Next Class Banner -->
+        <div class="next-class-banner" onclick="quickNavigate('Physics Lab')">
+          <div class="ncb-icon-wrap">⚛️</div>
+          <div class="ncb-body">
+            <div class="ncb-label" data-key="next_class">Next Class</div>
+            <div class="ncb-subject">Quantum Mechanics</div>
+            <div class="ncb-meta">🏛 Physics Lab · Room 204</div>
+          </div>
+          <div class="ncb-right">
+            <div class="ncb-time-val">23m</div>
+            <div class="ncb-time-label">until class</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section-header">
+          <div class="section-title" data-key="quick_actions">Quick Actions</div>
+          <div class="section-link" onclick="switchTab('services')">See all →</div>
+        </div>
+        <div class="quick-scroll">
+          <button class="qa-card" onclick="quickAction('bonafide')">
+            <div class="qa-icon-wrap ic-emerald">📜</div>
+            <div class="qa-label" data-key="bonafide_cert">Bonafide Cert</div>
+          </button>
+          <button class="qa-card" onclick="quickAction('lab_booking')">
+            <div class="qa-icon-wrap ic-violet">🔬</div>
+            <div class="qa-label" data-key="lab_booking">Lab Booking</div>
+          </button>
+          <button class="qa-card" onclick="quickAction('wifi_complaint')">
+            <div class="qa-icon-wrap ic-sky">📡</div>
+            <div class="qa-label" data-key="wifi_complaint">WiFi Issue</div>
+          </button>
+          <button class="qa-card" onclick="quickAction('id_card')">
+            <div class="qa-icon-wrap ic-amber">🪪</div>
+            <div class="qa-label" data-key="id_card">Lost ID Card</div>
+          </button>
+          <button class="qa-card" onclick="quickAction('library')">
+            <div class="qa-icon-wrap ic-orange">📖</div>
+            <div class="qa-label" data-key="library">Library</div>
+          </button>
+          <button class="qa-card" onclick="quickAction('printer')">
+            <div class="qa-icon-wrap ic-rose">🖨</div>
+            <div class="qa-label" data-key="printer">Find Printer</div>
+          </button>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="section-header">
+          <div class="section-title" data-key="recent_actions">Recent Activity</div>
+        </div>
+        <div class="activity-feed" id="audit-list">
+          <div class="activity-item">
+            <div class="ai-icon-wrap ai-success">✓</div>
+            <div class="ai-body">
+              <div class="ai-title">Physics Lab Booked</div>
+              <div class="ai-meta">Room 204 · Fri 3pm · <span class="status-pill sp-success">Confirmed</span></div>
+            </div>
+            <div class="ai-time">2h ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="ai-icon-wrap ai-warn">⏳</div>
+            <div class="ai-body">
+              <div class="ai-title">Bonafide Certificate</div>
+              <div class="ai-meta">Dept. Approval · <span class="status-pill sp-warn">Pending</span></div>
+            </div>
+            <div class="ai-time">1d ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="ai-icon-wrap ai-info">📡</div>
+            <div class="ai-body">
+              <div class="ai-title">WiFi Ticket Filed</div>
+              <div class="ai-meta">Hostel Block B · <span class="status-pill sp-success">Resolved</span></div>
+            </div>
+            <div class="ai-time">3d ago</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── AI AGENT TAB ── -->
+      <div class="tab-panel" id="tab-agent">
+        <!-- Agent Banner -->
+        <div class="agent-banner">
+          <div class="agent-orb">✨</div>
+          <div class="agent-info">
+            <div class="agent-name">Campus Assistant</div>
+            <div class="agent-status-row">
+              <div class="status-dot-live"></div>
+              <div class="agent-status-text" data-key="agent_desc">Ready to help • Always on</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="chat-window" id="chat-window">
+          <div class="chat-date-divider">Today</div>
+          <div class="msg agent-msg">
+            <div class="msg-avatar-wrap">
+              <div class="msg-avatar">✨</div>
+            </div>
+            <div class="msg-bubble">
+              <p data-key="welcome_msg">Hi Priya! 👋 I can help you book labs, get certificates, report issues, or navigate anywhere on campus. What do you need?</p>
+              <div class="msg-time">4:51 PM</div>
+            </div>
+          </div>
+
+          <div class="suggestion-chips" id="suggestion-chips">
+            <button class="chip" onclick="sendMessage('Book the chemistry lab tomorrow at 2pm')">🔬 Book Chemistry Lab</button>
+            <button class="chip" onclick="sendMessage('I need a bonafide certificate')">📜 Bonafide Cert</button>
+            <button class="chip" onclick="sendMessage('Hostel WiFi is down')">📡 WiFi Issue</button>
+            <button class="chip" onclick="sendMessage('Where is the nearest printer?')">🖨 Find Printer</button>
+            <button class="chip" onclick="sendMessage('Show me how to get to the library')">🗺 Navigate</button>
+          </div>
+        </div>
+
+        <!-- Input Bar -->
+        <div class="chat-input-bar">
+          <button class="mic-btn" id="mic-btn" onclick="toggleVoice()" title="Voice Input">🎤</button>
+          <input type="text" id="chat-input" placeholder="Ask anything..." data-placeholder-key="ask_anything"
+            onkeydown="if(event.key==='Enter') sendMessage()" />
+          <button class="send-btn" onclick="sendMessage()" id="send-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── MAP TAB ── -->
+      <div class="tab-panel" id="tab-map">
+        <div class="map-search-bar glass">
+          <span>🔍</span>
+          <input type="text" id="map-search" placeholder="Search building, lab, office..." onkeyup="filterMapSearch(this.value)" />
+        </div>
+
+        <div class="map-filters">
+          <button class="map-filter-pill active" onclick="filterMap(this,'all')">All</button>
+          <button class="map-filter-pill" onclick="filterMap(this,'labs')">Labs</button>
+          <button class="map-filter-pill" onclick="filterMap(this,'academic')">Academic</button>
+          <button class="map-filter-pill" onclick="filterMap(this,'facilities')">Facilities</button>
+          <button class="map-filter-pill" onclick="filterMap(this,'hostel')">Hostel</button>
+        </div>
+
+        <div class="campus-map-container glass" id="campus-map-container">
+          <img src="campus_map.jpg" alt="Campus Map" class="campus-map-img" id="campus-map-img" />
+          <!-- Hotspot overlays -->
+          <div class="map-hotspot" id="hs-physics" style="top:43%;left:33%" data-building="Physics Lab" onclick="showBuildingInfo('Physics Lab')">
+            <div class="hs-dot pulse-green"></div>
+            <div class="hs-label">Physics Lab</div>
+          </div>
+          <div class="map-hotspot" id="hs-chem" style="top:43%;left:60%" data-building="Chemistry Lab" onclick="showBuildingInfo('Chemistry Lab')">
+            <div class="hs-dot pulse-green"></div>
+            <div class="hs-label">Chem Lab</div>
+          </div>
+          <div class="map-hotspot" id="hs-library" style="top:18%;left:55%" data-building="Library" onclick="showBuildingInfo('Library')">
+            <div class="hs-dot"></div>
+            <div class="hs-label">Library</div>
+          </div>
+          <div class="map-hotspot" id="hs-canteen" style="top:28%;left:18%" data-building="Canteen" onclick="showBuildingInfo('Canteen')">
+            <div class="hs-dot pulse-amber"></div>
+            <div class="hs-label">Canteen</div>
+          </div>
+          <div class="map-hotspot" id="hs-admin" style="top:52%;left:10%" data-building="Administrative Office" onclick="showBuildingInfo('Administrative Office')">
+            <div class="hs-dot"></div>
+            <div class="hs-label">Admin</div>
+          </div>
+          <div class="map-hotspot" id="hs-cs" style="top:15%;left:35%" data-building="CS Block" onclick="showBuildingInfo('CS Block')">
+            <div class="hs-dot"></div>
+            <div class="hs-label">CS Block</div>
+          </div>
+          <div class="map-hotspot" id="hs-medical" style="top:68%;left:10%" data-building="Medical Center" onclick="showBuildingInfo('Medical Center')">
+            <div class="hs-dot pulse-red"></div>
+            <div class="hs-label">Medical</div>
+          </div>
+          <div class="map-hotspot" id="hs-hostelA" style="top:18%;left:80%" data-building="Hostel Block A" onclick="showBuildingInfo('Hostel Block A')">
+            <div class="hs-dot"></div>
+            <div class="hs-label">Hostel A</div>
+          </div>
+
+          <!-- Navigation path overlay (shown when navigating) -->
+          <svg class="nav-path-svg" id="nav-path-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                <polygon points="0 0, 6 3, 0 6" fill="#00f5a0" />
+              </marker>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- Building Info Panel -->
+        <div class="building-info-panel hidden" id="building-info-panel">
+          <div class="bip-header">
+            <div class="bip-icon-wrap" id="bip-icon">🏛</div>
+            <div>
+              <div class="bip-name" id="bip-name">Physics Lab</div>
+              <div class="bip-status-row">
+                <div class="bip-status-dot"></div>
+                <div class="bip-status-text" id="bip-status">Open · 9 AM – 6 PM</div>
+              </div>
+            </div>
+            <button class="bip-close" onclick="closeBuildingInfo()">✕</button>
+          </div>
+          <div class="bip-details" id="bip-details"></div>
+          <div class="bip-actions">
+            <button class="btn-primary small" id="bip-navigate-btn" onclick="startNavigation()">📍 Navigate</button>
+            <button class="btn-secondary small" id="bip-book-btn" onclick="bookFromMap()">📅 Book Slot</button>
+          </div>
+        </div>
+
+        <!-- Location List -->
+        <div class="location-list" id="location-list">
+          <div class="section-title">All Locations</div>
+        </div>
+      </div>
+
+      <!-- ── SERVICES TAB ── -->
+      <div class="tab-panel" id="tab-services">
+        <div class="section-header" style="margin-top:8px">
+          <div class="section-title">Campus Services</div>
+        </div>
+        <div class="services-grid">
+
+          <div class="service-card" onclick="openService('bonafide')">
+            <div class="sc-icon-wrap teal-grad">📜</div>
+            <div class="sc-body">
+              <div class="sc-title" data-key="bonafide_cert">Bonafide Certificate</div>
+              <div class="sc-desc">Generate instantly with department seal</div>
+            </div>
+            <div class="sc-chevron">›</div>
+          </div>
+
+          <div class="service-card" onclick="openService('lab')">
+            <div class="sc-icon-wrap purple-grad">🔬</div>
+            <div class="sc-body">
+              <div class="sc-title" data-key="lab_booking">Lab Booking</div>
+              <div class="sc-desc">Physics, Chemistry, CS Block</div>
+            </div>
+            <div class="sc-chevron">›</div>
+          </div>
+
+          <div class="service-card" onclick="openService('wifi')">
+            <div class="sc-icon-wrap blue-grad">📡</div>
+            <div class="sc-body">
+              <div class="sc-title" data-key="wifi_complaint">WiFi / IT Complaint</div>
+              <div class="sc-desc">Auto-file ticket &amp; track status</div>
+            </div>
+            <div class="sc-chevron">›</div>
+          </div>
+
+          <div class="service-card" onclick="openService('id')">
+            <div class="sc-icon-wrap orange-grad">🪪</div>
+            <div class="sc-body">
+              <div class="sc-title" data-key="id_card">Lost ID Card</div>
+              <div class="sc-desc">Report &amp; request replacement</div>
+            </div>
+            <div class="sc-chevron">›</div>
+          </div>
+
+          <div class="service-card" onclick="openService('library')">
+            <div class="sc-icon-wrap green-grad">📚</div>
+            <div class="sc-body">
+              <div class="sc-title" data-key="library">Library</div>
+              <div class="sc-desc">Borrow, return &amp; reserve books</div>
+            </div>
+            <div class="sc-chevron">›</div>
+          </div>
+
+          <div class="service-card" onclick="openService('medical')">
+            <div class="sc-icon-wrap red-grad">🏥</div>
+            <div class="sc-body">
+              <div class="sc-title">Medical Appointment</div>
+              <div class="sc-desc">Book campus doctor visit</div>
+            </div>
+            <div class="sc-chevron">›</div>
+          </div>
+
+          <div class="service-card" onclick="openService('timetable')">
+            <div class="sc-icon-wrap teal-grad">🗓</div>
+            <div class="sc-body">
+              <div class="sc-title">Timetable</div>
+              <div class="sc-desc">View your weekly schedule</div>
+            </div>
+            <div class="sc-chevron">›</div>
+          </div>
+
+          <div class="service-card" onclick="openService('feedback')">
+            <div class="sc-icon-wrap purple-grad">💬</div>
+            <div class="sc-body">
+              <div class="sc-title">Feedback</div>
+              <div class="sc-desc">Rate facilities anonymously</div>
+            </div>
+            <div class="sc-chevron">›</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+        <div class="nav-active-pill"></div>
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label" data-key="home">Home</span>
+      </button>
+      <button class="nav-item" id="nav-agent" onclick="switchTab('agent')">
+        <div class="nav-active-pill"></div>
+        <span class="nav-icon">✨</span>
+        <span class="nav-label" data-key="agent">Assistant</span>
+      </button>
+      <button class="nav-item" id="nav-map" onclick="switchTab('map')">
+        <div class="nav-active-pill"></div>
+        <span class="nav-icon">🗺</span>
+        <span class="nav-label" data-key="map">Map</span>
+      </button>
+      <button class="nav-item" id="nav-services" onclick="switchTab('services')">
+        <div class="nav-active-pill"></div>
+        <span class="nav-icon">⚡</span>
+        <span class="nav-label" data-key="services">Services</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ─── MODALS ─── -->
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay hidden" id="confirm-modal">
+    <div class="modal">
+      <div class="modal-icon" id="modal-icon">📋</div>
+      <h3 class="modal-title" id="modal-title">Confirm Action</h3>
+      <p class="modal-body" id="modal-body">Are you sure you want to proceed?</p>
+      <div class="modal-source" id="modal-source"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('confirm-modal')">Cancel</button>
+        <button class="btn-primary" id="modal-confirm-btn" onclick="confirmAction()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay hidden" id="success-modal">
+    <div class="modal success-modal">
+      <div class="success-anim">🎉</div>
+      <h3 class="modal-title" id="success-title">All done!</h3>
+      <p class="modal-body" id="success-body">Your request was completed.</p>
+      <div class="audit-ref" id="audit-ref"></div>
+      <button class="btn-primary" onclick="closeModal('success-modal')">Great, thanks!</button>
+    </div>
+  </div>
+
+  <!-- Service Modal -->
+  <div class="modal-overlay hidden" id="service-modal">
+    <div class="modal service-modal">
+      <div class="modal-close-row">
+        <h3 class="modal-title" id="service-modal-title">Service</h3>
+        <button class="icon-btn" onclick="closeModal('service-modal')">✕</button>
+      </div>
+      <div id="service-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Notifications Drawer -->
+  <div class="modal-overlay hidden" id="notif-modal">
+    <div class="modal">
+      <div class="modal-close-row">
+        <h3 class="modal-title">Notifications</h3>
+        <button class="icon-btn" onclick="closeModal('notif-modal')">✕</button>
+      </div>
+      <div class="notif-list">
+        <div class="notif-item unread">
+          <div class="notif-dot-wrap">🔬</div>
+          <div>
+            <div class="notif-title">Physics Lab Confirmed</div>
+            <div class="notif-sub">Friday 3pm · Room 204</div>
+          </div>
+        </div>
+        <div class="notif-item unread">
+          <div class="notif-dot-wrap">📜</div>
+          <div>
+            <div class="notif-title">Bonafide Cert Approved</div>
+            <div class="notif-sub">Ready to download</div>
+          </div>
+        </div>
+        <div class="notif-item unread">
+          <div class="notif-dot-wrap">⏰</div>
+          <div>
+            <div class="notif-title">Reminder: Quantum Mechanics</div>
+            <div class="notif-sub">Starts in 30 min · Physics Lab 204</div>
+          </div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot-wrap">📡</div>
+          <div>
+            <div class="notif-title">WiFi Ticket Resolved</div>
+            <div class="notif-sub">Hostel Block B · 3 days ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Drawer -->
+  <div class="modal-overlay hidden" id="profile-modal">
+    <div class="modal profile-modal-card">
+      <div class="modal-close-row">
+        <h3 class="modal-title">Student Profile</h3>
+        <button class="icon-btn" onclick="closeModal('profile-modal')">✕</button>
+      </div>
+
+      <div class="profile-header-wrap">
+        <div class="profile-avatar-big" id="profile-student-avatar">P</div>
+        <div class="profile-name" id="profile-student-name">Priya Sharma</div>
+        <div class="profile-email" id="profile-student-email">priya.sharma@college.edu</div>
+        <div class="profile-badges" id="profile-student-badges">
+          <span class="badge" id="profile-badge-dept">CS Year 3</span>
+          <span class="badge" id="profile-badge-roll">CS21045</span>
+        </div>
+      </div>
+
+      <!-- Full Registered Student Details Card -->
+      <div class="profile-details-card">
+        <div class="profile-details-title">
+          <span>Registered Student Details</span>
+          <span class="status-pill-active">● Active</span>
+        </div>
+        <div class="profile-details-grid">
+          <div class="profile-detail-row">
+            <span class="profile-detail-label">👤 Full Name</span>
+            <span class="profile-detail-val" id="pd-name">Priya Sharma</span>
+          </div>
+          <div class="profile-detail-row">
+            <span class="profile-detail-label">🆔 Roll Number</span>
+            <span class="profile-detail-val" id="pd-roll">CS21045</span>
+          </div>
+          <div class="profile-detail-row">
+            <span class="profile-detail-label">🏛 Department</span>
+            <span class="profile-detail-val" id="pd-dept">Computer Science & Engineering</span>
+          </div>
+          <div class="profile-detail-row">
+            <span class="profile-detail-label">📅 Current Year</span>
+            <span class="profile-detail-val" id="pd-year">3rd Year</span>
+          </div>
+          <div class="profile-detail-row">
+            <span class="profile-detail-label">📧 College Email</span>
+            <span class="profile-detail-val" id="pd-email">demo@college.edu</span>
+          </div>
+          <div class="profile-detail-row">
+            <span class="profile-detail-label">📱 Phone Number</span>
+            <span class="profile-detail-val" id="pd-phone">+91 9876543210</span>
+          </div>
+          <div class="profile-detail-row">
+            <span class="profile-detail-label">🔒 Security PIN</span>
+            <span class="profile-detail-val" id="pd-pin">•••• (Saved)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-menu">
+        <button class="profile-menu-item" onclick="closeModal('profile-modal'); switchTab('services');">📋 Apply for Services</button>
+        <button class="profile-menu-item logout-btn" onclick="logout()">🚪 Sign Out / Switch Student</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- Voice Listening Overlay -->
+  <div class="voice-overlay hidden" id="voice-overlay">
+    <div class="voice-modal glass">
+      <div class="voice-rings">
+        <div class="vr vr1"></div>
+        <div class="vr vr2"></div>
+        <div class="vr vr3"></div>
+        <div class="mic-center">🎤</div>
+      </div>
+      <p class="voice-listening-text" data-key="listening">Listening...</p>
+      <p class="voice-hint" data-key="voice_hint">Speak your request in English or Hindi</p>
+      <button class="btn-secondary" onclick="stopVoice()">Stop</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

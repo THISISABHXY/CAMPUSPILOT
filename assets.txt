@@ -1,0 +1,4 @@
+/* ═══════════════════════════════════
+   campus_map.jpg is placed in the
+   same folder — served as static file
+   ═══════════════════════════════════ */
